@@ -1,0 +1,130 @@
+/****************************************************/
+// P5.play: Platform game
+// Plat runner
+// Written by jeven
+/*******************************************************/
+console.log("Plat runner loaded");
+const SCREEN_WIDTH= windowWidth;
+const SCREEN_HEIGHT = windowHeight;
+const PLAYER_WIDTH = 10;
+const PLAYER_HEIGHT = 10;
+
+
+
+var score = 0;
+var player;
+var lives = 3;
+var screenSelector="start";
+var instructionText = true;
+
+
+/*******************************************************/
+// setup()
+/*******************************************************/
+function setup(){
+    missle=new Group;
+    
+    cnv= new Canvas(windowWidth,windowHeight);
+    startScreen();
+    
+}
+/*******************************************************/
+// draw()
+/*******************************************************/
+function draw(){
+    if (screenSelector=="game"){
+        gameScreen();
+    }
+}
+
+function startScreen(){
+    background("#76F1E8");
+    textSize(32);
+    fill(255);
+    stroke(0);
+    strokeWeight(4);
+    text("Welcome Plat Runner", 600, 250);
+    textSize(24);
+    text("Press any key to start", 635, 350);
+    textSize(30);
+    strokeWeight(5);
+    text("Instructions",50 , 700);
+       
+   }
+    
+}
+
+
+
+function mousePressed(){
+    if(instructionText==True){
+        screenSelector="instruction";
+    }
+}
+
+function shopScreen(){
+    
+}
+
+
+function instructScreen(){
+    background("green");
+    text("How to play");
+    
+}
+
+function gameScreen(){
+    background("Blue");
+   player= new Sprite(10,10,50,'k');
+   platform
+   platform= new Sprite(100,100,100,'k');
+    
+   document.addEventListener("keydown", function(event) {
+ if (event.code === 'ArrowLeft') {
+rectangle.vel.x = -5;
+ }
+else if (event.code === 'ArrowRight')
+rectangle.vel.x = 5;
+});
+
+document.addEventListener("keyup", function(event) {
+if (event.code === 'ArrowLeft') {
+   rectangle.vel.x = 0;
+ }
+
+else if (event.code === 'ArrowRight')
+rectangle.vel.x = 0;
+});
+
+document.addEventListener("keydown", function(event) {
+ if (event.code === 'ArrowUp') {
+rectangle.vel.y = -5;
+ }
+else if (event.code === 'ArrowDown')
+rectangle.vel.y = 5;
+});
+
+document.addEventListener("keyup", function(event) {
+if (event.code === 'ArrowUp') {
+   rectangle.vel.y = 0;
+ }
+
+else if (event.code === 'ArrowDown')
+rectangle.vel.y = 0;
+});
+}
+
+function endScreen(){
+    background("red");
+    text("Game over");
+}
+function newMissle(){
+    
+}
+
+function resetGame(){
+    
+}
+/*******************************************************/
+//  END OF APP
+/*******************************************************/
