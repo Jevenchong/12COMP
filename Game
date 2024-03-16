@@ -1,45 +1,68 @@
-/****************************************************/
-// P5.play: Platform game
-// Plat runner
-// Written by jeven
 /*******************************************************/
-console.log("Plat runner loaded");
-const SCREEN_WIDTH= windowWidth;
-const SCREEN_HEIGHT = windowHeight;
-const PLAYER_WIDTH = 10;
-const PLAYER_HEIGHT = 10;
-
-
-
-var score = 0;
+// Plat runner
+// Written by Jeven
+/*******************************************************/
+console.log("plat runner loaded");
+var nextSpawn = 0;
 var player;
+var platform;
+var yspawn = Math.random() * 1000
+var screenSelector="start"
+var instructText;
 var lives = 3;
-var screenSelector="start";
-var instructionText = true;
-
-
 /*******************************************************/
 // setup()
 /*******************************************************/
-function setup(){
-    missle=new Group;
-    
-    cnv= new Canvas(windowWidth,windowHeight);
-    startScreen();
-    
+
+function setup() {
+  console.log("setup: ");
+  console.log("event ");
+  console.log(yspawn);
+  world.gravity.y=10;  
+  cnv = new Canvas(windowWidth, windowHeight); 
+  
+
+   document.addEventListener("keydown", function(event) {
+        if(event.code==='KeyP'){
+            screenSelector == "start";
+            
+        } else if (event.code=='KeyL'){
+    screenSelector ="game"
+walls()
+    playermove()
+        resetGame()
 }
+});
+}
+    
+
+          
+    
+ 
+
+
+
 /*******************************************************/
 // draw()
 /*******************************************************/
-function draw(){
-    if (screenSelector=="game"){
-        gameScreen();
+function draw() {
+   if (screenSelector=="start"){
+       startScreen()
+   } else if (screenSelector=="instruct"){
+       instructScreen()
+   }else if (screenSelector=="game"){
+       gameScreen()
+     
     }
+   else if (screenSelector=="end"){
+       endScreen()
+   }
 }
 
 function startScreen(){
-    background("#76F1E8");
-    textSize(32);
+    screenSelector="start";
+    background("green");
+textSize(32);
     fill(255);
     stroke(0);
     strokeWeight(4);
@@ -48,83 +71,111 @@ function startScreen(){
     text("Press any key to start", 635, 350);
     textSize(30);
     strokeWeight(5);
-    text("Instructions",50 , 700);
-       
-   }
-    
-}
+    instructText= text("Instructions",50 , 700);
+    };
 
 
-
-function mousePressed(){
-    if(instructionText==True){
-        screenSelector="instruction";
-    }
-}
-
-function shopScreen(){
-    
-}
-
-
-function instructScreen(){
-    background("green");
-    text("How to play");
-    
+function newPlatform(){
+    platform= new Sprite(500,400,300,10,'k')
+    platform.velocity.x=-6;
+   
 }
 
 function gameScreen(){
-    background("Blue");
-   player= new Sprite(10,10,50,'k');
-   platform
-   platform= new Sprite(100,100,100,'k');
+    background("cyan");
+    screenSelector="game";
     
-   document.addEventListener("keydown", function(event) {
- if (event.code === 'ArrowLeft') {
-rectangle.vel.x = -5;
- }
-else if (event.code === 'ArrowRight')
-rectangle.vel.x = 5;
-});
+    if(frameCount> nextSpawn){
+    newPlatform();
+        nextSpawn = frameCount + random(30,70); 
+        platform.y = Math.random()*windowHeight -200;
+       console.log(platform.y);}
+       
+    
 
-document.addEventListener("keyup", function(event) {
-if (event.code === 'ArrowLeft') {
-   rectangle.vel.x = 0;
- }
+}
+function instructScreen(){
+    background("blue");
+    screenSelector="instruct";
+}
 
-else if (event.code === 'ArrowRight')
-rectangle.vel.x = 0;
-});
+function walls(){
+    wallLH  = new Sprite(0, height/2, 8, height, 'k');
+            wallLH.color = 'black';
+    
+    wallRH  = new Sprite(windowWidth, height/2, 8, height, 'k');
+            wallRH.color = 'blue';
+            
+    wallTop = new Sprite(0, 0, windowWidth*2, 8, 'k');
+            wallTop.color = 'green';
+            
+    wallBot = new Sprite(0,height , windowWidth*2, 8, 'k');
+}
+function playermove(){
+     
+            
+    
+    document.addEventListener("keydown", function(event) {
+        if (event.code === 'KeyA') {
+            player.vel.x = -5;
+        } else if (event.code === 'KeyD'){
+            player.vel.x = 5;
+        }
+    });
+    
+    document.addEventListener("keyup", function(event) {
+        if (event.code === 'KeyA') {
+            player.vel.x = 0;
+        } else if (event.code === 'KeyD')
+            player.vel.x = 0;
+    });
+    
+    document.addEventListener("keydown", function(event) {
+        if (event.code === 'KeyW') {
+            player.vel.y = -5;
+        } else if (event.code === 'KeyS')
+            player.vel.y = 5;
+    });
 
-document.addEventListener("keydown", function(event) {
- if (event.code === 'ArrowUp') {
-rectangle.vel.y = -5;
- }
-else if (event.code === 'ArrowDown')
-rectangle.vel.y = 5;
-});
+    document.addEventListener("keyup", function(event) {
+        if (event.code === 'KeyW') {
+            player.vel.y = 0;
+     } else if (event.code === 'KeyS')
+            player.vel.y = 0;
+    });
+}
+function missle(){
+    
+}
+function playerHitwallBot(_player,_wallBot ) {
 
-document.addEventListener("keyup", function(event) {
-if (event.code === 'ArrowUp') {
-   rectangle.vel.y = 0;
- }
-
-else if (event.code === 'ArrowDown')
-rectangle.vel.y = 0;
-});
+// Player hits bottom wall and dies
+    endScreen();
+    
 }
 
 function endScreen(){
-    background("red");
-    text("Game over");
-}
-function newMissle(){
+    screenSelector="end";
+    background("black");
+    allSprites.visible = false;
     
+    document.addEventListener("keydown", function(event) {
+        if(event.code==='KeyP'){
+            screenSelector == "game";
+            
+            
+        } 
+
+});
+}
+function resetGame(){
+    player = new Sprite(100, 50, 100, 50, 'd');
+           player.color = 'cyan';
+           player.friction=10;
+    player.collides(wallBot,playerHitwallBot)
 }
 
-function resetGame(){
-    
-}
+
 /*******************************************************/
 //  END OF APP
 /*******************************************************/
