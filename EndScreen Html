@@ -33,28 +33,44 @@
  
         <label for="username">Name:</label>
         <input type="text" id="nameInput" placeholder="Enter your name">
-
-    
+        <label for="userAge">Age:</label>
+        <input type="text" id="ageInput" placeholder="Enter your age">
         <button onclick="getUserInfo()">Submit Name</button>
 
     <script>
-
+ var userAgeIsInvalid= true;
+        var userNameIsInvalid=true;
+       const MINAGE=5;
+       const MAXAGE=100;
+       
     function getUserInfo(){
         var userName = document.getElementById("nameInput").value;
         localStorage.setItem('userName', userName);
         console.log(name);
       
-        var userAgeInvalid= true;
-        var userNameInvalid=true;
-       const MINAGE=5;
-       const MAXAGE=100;
+       
 
      if (!isNaN(userName) || userName == "" || userName == " ") {
       alert("Invalid username you must enter a valid username");//invalid msg
     }
     else {
-      window.location="leaderboard.html"
-    }  
+      userNameIsInvalid=false;
+    } 
+    var userAge = document.getElementById("ageInput").value;
+        localStorage.setItem('userAge', userAge);
+        
+    if (userAge == null || userAge == "" || userAge == " " || isNaN(userAge) || userAge < MINAGE || userAge > MAXAGE) {
+      alert("Invalid you must enter a valid age between " + MINAGE + " and " + MAXAGE);//invalid msg
+    }
+    else {
+      userAgeIsInvalid = false;
+      console.log(userAge);
+    }
+    if (userNameIsInvalid==false & userAgeIsInvalid==false){
+        window.location='leaderboard.html';
+    }
+      
+        
   }
   
 
@@ -73,17 +89,9 @@
 </html>
 <!--***************************************************
   END OF INDEX.HTML
-       <label for="userage">age:</label>
-        <input type="text" id="ageInput" placeholder="Enter your age">
+       
   
-  if (userAge == null || userAge == "" || userAge == " " || isNaN(userAge) || userAge < MINAGE || userAge > MAXAGE) {
-      alert("Invalid you must enter a valid age between " + MINAGE + " and " + MAXAGE);//invalid msg
-    }
-    else {
-      userAgeIsInvalid = false;
-    }
-    if userNameIsInvalid=false & userAgeIsInvalid=false{
-        
-    }
+
+    
   <button type="button" onclick==instructionScreen()>Instructions</button>
 ****************************************************-->
