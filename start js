@@ -1,0 +1,118 @@
+/*******************************************************/
+// Plat runner
+// Written by Jeven
+/*******************************************************/
+console.log("plat runner loaded");
+
+var screenSelector="start"
+
+var starttext;
+var platbutton;
+var resetbutton;
+var instructbutton;
+var leaderboardbutton;
+//the back button for the instruction screen
+var back1;
+
+/*******************************************************/
+// preload()
+// Called by P5 before setup
+/*******************************************************/
+
+/*******************************************************/
+// setup()
+
+/*if.name.mouse.presses(){
+    screenSelector==
+
+}
+*/
+/*******************************************************/
+
+function setup() {
+    console.log("setup: ");
+    console.log("event ");
+    
+    world.gravity.y=10;  
+    cnv = new Canvas(windowWidth, windowHeight); 
+    playbutton = new Sprite(700,400,300,75,'s');
+    playbutton.color='red';
+    console.log("sprite loaded");
+    allSpritesVisible=true;
+    instructbutton= new Sprite(700,500,300,75,'s');
+    instructbutton.color='green';
+    leaderboardbutton= new Sprite(700,600,300,75,'s');
+    leaderboardbutton.color='blue';
+    
+
+}
+    
+
+
+/*******************************************************/
+// draw()
+/*******************************************************/
+function draw() {
+   screenSelector= startScreen();
+       if (playbutton.mouse.presses()){
+       window.location = 'game.html';
+          
+
+       }
+       if (playbutton.mouse.hovering()) playbutton.color = 'blue';
+	else playbutton.color = 'red';
+	 if (instructbutton.mouse.presses()){
+	    window.location ='instruct.html';
+	}
+	if (instructbutton.mouse.hovering()) instructbutton.color = 'blue';
+	else instructbutton.color = 'red';
+	
+	if (leaderboardbutton.mouse.hovering()) leaderboardbutton.color = 'blue';
+	else leaderboardbutton.color = 'red';
+	 if (leaderboardbutton.mouse.presses()){
+	    window.location ='leaderboard.html';
+	}
+    }
+   
+
+
+function startScreen(){
+    screenSelector="start";
+    background("black");
+    textSize(32);
+    fill(255);
+    stroke(0);
+    strokeWeight(4);
+    //title
+    text("Welcome To Plat Runner", 525, 250);
+    textSize(24);
+    playbutton.text='Play';
+    playbutton.textSize=20;
+    strokeWeight(5);
+    //instruction text
+    
+  
+    instructbutton.textSize=20;
+    instructbutton.text='Instructions';
+    leaderboardbutton.textSize=20;
+    leaderboardbutton.text='Leaderboard';
+    
+};
+
+
+
+function shopScreen(){
+    background("green");
+    item1= new Sprite(10,10,10,10,'k')
+     textSize(24);
+    text("SHOP",50,50,);
+}
+
+
+
+
+
+
+/*******************************************************/
+//  END OF APP
+/*******************************************************/
