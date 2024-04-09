@@ -4,210 +4,310 @@
 /*******************************************************/
 console.log("plat runner loaded");
 var nextSpawn = 0;
-var diffSpawn=0;
+var diffSpawn = 0;
 var player;
 var platform;
-var screenSelector="start"
-var instructText;
+var screenSelector = "game"
+let touchingPlatform = false; // Variable to track whether the player is touching a platform
+let jumping = false; // Variable to track whether the player is currently jumping
 var lives = 3;
-var score=0;
+var score = 0;
 var missile;
+var platformMid;
+var timer = 0;
+var spawn;
+var wallBot;
+const MISSILEWIDTH=50;
+const MISSILELENGTH=10;
+const PLATFORMWIDTH=10;
+const PLATFORMLENGTH=300;
+
+
+
+
+/*******************************************************/
+// preload()
+// Called by P5 before setup
+/*******************************************************/
+function preload() {
+	imgBG = loadImage('Background.png');
+	imgLives = loadImage('Heart.png');
+	imgPlat = loadImage('plat.png');
+	imgMis = loadImage('missile.png');
+
+}
 /*******************************************************/
 // setup()
+
+/*if.name.mouse.presses(){
+    screenSelector==
+
+}
+*/
 /*******************************************************/
 
 function setup() {
-  console.log("setup: ");
-  console.log("event ");
+	console.log("setup: ");
+	console.log("event ");
 
-  world.gravity.y=10;  
-  cnv = new Canvas(windowWidth, windowHeight); 
-  
+	world.gravity.y = 10;
+	cnv = new Canvas(windowWidth, windowHeight);
+	missiles = new Group();
+	if (screenSelector == "game") {
+		resetGame();
+		walls();
+		playermove();
+		spawnPlatform();
+		platforms = new Group();
+	}
 
-   document.addEventListener("keydown", function(event) {
-        if(event.code==='KeyP'){
-            screenSelector == "start";
-            
-        } else if (event.code=='KeyL' & screenSelector =="start"){
-    screenSelector ="game"
-    walls()
-    playermove()
-    resetGame()
-} else if(event.code=='KeyI' & screenSelector =="start"){
-    screenSelector="instruct";
-    
-}else if(event.code=='KeyB'& screenSelector=="instruct"){
-    screenSelector="start";
 }
-});
-}
-    
+
 
 
 /*******************************************************/
 // draw()
 /*******************************************************/
 function draw() {
-   if (screenSelector=="start"){
-       startScreen()
-    }else if (screenSelector=="instruct"){
-       instructScreen()
-    }else if (screenSelector=="game"){
-       gameScreen()
-    }else if (screenSelector=="end"){
-       endScreen()
-   }
-}
+	if (screenSelector == "game") {
+		gameScreen();
 
-function startScreen(){
-    screenSelector="start";
-    background("green");
-    textSize(32);
-    fill(255);
-    stroke(0);
-    strokeWeight(4);
-    text("Welcome To Plat Runner", 600, 250);
-    textSize(24);
-    text("Press L to start", 635, 350);
-    textSize(30);
-    strokeWeight(5);
-    instructText= text("Press I for instruction",50 , 700);
-    };
+	}
 
-
-function newPlatform(){
-    platform= new Sprite(500,400,300,10,'k')
-    platform.velocity.x=-6;
-    platform.color="blue";
-   
-}
-
-function newMissile(){
-    missile= new Sprite(500,400,50,10,'k')
-    missile.velocity.x=-6;
-    missile.color="red";
-    missileHitPlayer()
-
-}
-
-function gameScreen(){
-    background("cyan");
-    screenSelector="game";
-    
-    if(frameCount> nextSpawn){
-    newPlatform();
-        nextSpawn = frameCount + random(15,50); 
-        platform.y = Math.random()*windowWidth -400;
-        platform.x = Math.random()*windowHeight+400 ;
-       console.log(platform.y);}
-       
-       if(frameCount> diffSpawn){
-    newMissile();
-        diffSpawn = frameCount + random(10,120); 
-        missile.y = Math.random()*windowWidth ;
-        missile.x = Math.random()*windowHeight ;
-       console.log(missile.y);}
-       
-       score++;
-       text(score, 50, 50);
-       text("lives = " + lives,150,50);
-       player.collides(missile,missileHitPlayer)
+	for (let i = 0; i < lives; i++) {
+		image(imgLives, 35 * i, 0);
+		imgLives.resize(50, 50);
+	}
 }
 
 
-function instructScreen(){
-    background("blue");
-    screenSelector="instruct";
-    text("WASD to move", 50,100);
-    text("Dodge the missiles and stay alive", 50,200);
-    text("Avoid falling to death",50,300);
-    text("Press B to go back",50,700)
+
+function spawnPlatform() {
+	spawn = new Sprite(200, 555, PLATFORMLENGTH, PLATFORMWIDTH, 'k')
+	spawn.velocity.x = -2;
+	spawn.color = "blue";
+	spawn.addImage(imgPlat);
+	imgPlat.resize(300, 50);
+
+
 }
 
-function walls(){
-    wallLH  = new Sprite(0, height/2, 8, height, 'k');
-            wallLH.color = 'black';
-    
-    wallRH  = new Sprite(windowWidth, height/2, 8, height, 'k');
-            wallRH.color = 'blue';
-            
-    wallTop = new Sprite(0, -100, windowWidth*2, 8, 'k');
-            wallTop.color = 'green';
-            
-    wallBot = new Sprite(0,height, windowWidth*2, 8, 'k');
+
+function newPlatform() {
+	platform = new Sprite(500, 400, PLATFORMLENGTH, PLATFORMWIDTH, 'k')
+	platform.velocity.x = -6;
+	platform.color = "blue";
+	platform.addImage(imgPlat);
+	imgPlat.resize(300, 10);
+
 }
 
-function playermove(){
 
-    document.addEventListener("keydown", function(event) {
-        if (event.code === 'KeyA') {
-            player.vel.x = -5;
-        } else if (event.code === 'KeyD'){
-            player.vel.x = 5;
-        }
-    });
-    
-    document.addEventListener("keyup", function(event) {
-        if (event.code === 'KeyA') {
-            player.vel.x = 0;
-        } else if (event.code === 'KeyD')
-            player.vel.x = 0;
-    });
-    
-    document.addEventListener("keydown", function(event) {
-        if (event.code === 'KeyW') {
-            player.vel.y = -6;
-        } else if (event.code === 'KeyS')
-            player.vel.y =0;
-    });
+function newMissile() {
+	missile = new Sprite(500, 400, MISSILEWIDTH, MISSILELENGTH, 'k')
+	missile.velocity.x = -6;
+	missile.color = "red";
+	missile.addImage(imgMis);
 
-    document.addEventListener("keyup", function(event) {
-        if (event.code === 'KeyW') {
-            player.vel.y = -6;
-     } 
-});
 }
 
-function missileHitPlayer(_player,_missile){
-    //Missile hits player then loses 1 health if loses all 3 they die
-    if(player.collides(missile)){
-        lives-1;
-        
-    }else if(lives==0){
-        screenSelector="end";
-    }
+//missile system
+function missileHitPlayer(_player, _missile) {
+	//Missile hits player then loses 1 health if loses all 3 they die
+	lives--;
+	console.log("player hit");
+	missile.remove();
 }
 
-function playerHitwallBot(_player,_wallBot ) {
+//game
+function gameScreen() {
 
+	screenSelector = "game";
+	background(imgBG);
+	allSprites.visible = true;
+	//platforms coming in
+	if (frameCount + 1 > nextSpawn) {
+		newPlatform();
+		nextSpawn = frameCount + random(15, 50);
+		platform.y = Math.random() * windowHeight + 500;
+		platform.x = Math.random() * windowWidth + 800;
+		platform.addImage(imgPlat);
+		imgPlat.resize(300, 50);
+		console.log(platform.y);
+		platforms.add(platform);
+	}
+	if (player.y > 800) {}
+	//missiles coming in
+	if (frameCount > diffSpawn) {
+		newMissile();
+		diffSpawn = frameCount + random(10, 120);
+		missile.y = Math.random() * windowHeight + 250;
+		missile.x = Math.random() * windowWidth + 800;
+		missile.velocity.x = -(Math.random() * 15 + 10);
+		console.log(missile.y);
+		missile.addImage(imgMis);
+		imgMis.resize(200, 200);
+	}
+
+	player.collides(wallBot, playerHitwallBot);
+	player.collides(wallTop, playerHitwallBot);
+
+	player.collides(wallRH, playerHitwallBot);
+
+	player.collides(wallLH, playerHitwallLH);
+	player.collides(missile, missileHitPlayer);
+		player.collides(player, playerHitPlatform);
+		player.collides(player,playerLeavePlatform);
+
+	if (player.y > 800) {
+		camera.y = player.y;
+		imgBG.y = player.y;
+	}
+
+	console.log(missile.velocity.x);
+	score++;
+	text(score, 150, 25);
+
+	if (lives <= 0) {
+		background("black");
+		removeAllSprites();
+		text("Loading", 500, 250);
+		text.color = 'blue';
+		text.Size = 20;
+		window.location = 'end.html'; //change to window.location
+	}
+	sessionStorage.setItem('score', score)
+}
+
+
+
+
+//creating walls
+function walls() {
+	wallLH = new Sprite(-100, height / 2, 8, height, 'k');
+	wallLH.color = 'black';
+
+	wallRH = new Sprite(windowWidth + 100, height / 2, 8, height, 'k');
+	wallRH.color = 'blue';
+
+	wallTop = new Sprite(0, -100, windowWidth * 2, 8, 'k');
+	wallTop.color = 'green';
+
+	wallBot = new Sprite(0, 3000, windowWidth * 2, 1000, 'k');
+	console.log(wallBot.y);
+}
+
+//player movement
+function playermove() {
+
+	document.addEventListener("keydown", function(event) {
+		if (event.code === 'KeyA') {
+			player.vel.x = -5;
+		} else if (event.code === 'KeyD') {
+			player.vel.x = 5;
+		}
+	});
+
+	document.addEventListener("keyup", function(event) {
+		if ((event.code === 'KeyA' && player.vel.x < 0) || (event.code === 'KeyD' && player.vel.x > 0)) {
+			player.vel.x = 0;
+		}
+	});
+
+	document.addEventListener("keydown", function(event) {
+		console.log('Pressed key:', event.code);
+		if (event.code === 'KeyW' && touchingPlatform ) {
+			player.vel.y = -6;
+			jumping = true; // Set jumping to true when jumping
+			console.log('Jumping:', jumping);
+		}
+	});
+
+	document.addEventListener("keyup", function(event) {
+		if (event.code === 'KeyW') {
+			if (player.vel.y < 0) { // Only cancel jump if player is currently moving upwards
+				player.vel.y = 0;
+			}
+		}
+	});
+
+	// Additional event listener to handle the jump release
+	document.addEventListener("keyup", function(event) {
+		if (event.code === 'KeyW') {
+			jumping = false; // Reset jumping to false when jump key is released
+			console.log('Jumping:', jumping);
+		}
+	});
+
+
+}
+//player hits platforms and enables one jump
+function playerHitPlatform(_player,_platforms) {
+	touchingPlatform = true; // Set touchingPlatform to true when player touches platform
+	console.log("platform hit");
+}
+
+function playerLeavePlatform(_player,_platforms) {
+	touchingPlatform = false; // Set touchingPlatform to false when player leaves platform
+	console.log("platform left");
+}
+
+
+//player hits Left hand wall and dies 
+function playerHitwallLH(_player, _wallLH) {
+    window.location = 'end.html';
+	background("black");
+	text("Loading", windowWidth / 2, windowHeight / 2)
+	console.log("Player hit left wall died");
+	removeAllSprites();
+	text("Loading", 500, 250);
+	text.color = 'blue';
+	text.Size = 20;
+}
 // Player hits bottom wall and dies
-    screenSelector = "end";
-  
-}
-
-function endScreen(){
-    screenSelector="end";
+function playerHitwallBot(_player, _wallBot) {
+    window.location = 'end.html';
     background("black");
-    allSprites.visible = false;
-    text("Your Score Was " + score,50,50);
-    text("Press R to restart" ,150,150);
-    document.addEventListener("keydown", function(event) {
-         if(event.code=='KeyR' & screenSelector=="end"){
-             screenSelector="game";
-    player.y=100;
-    player.x=100;
-    allSprites.visible = true;
-    score=0;
+	text("Loading", windowWidth / 2, windowHeight / 2)
+	console.log("Player hit top wall died");
+	removeAllSprites();
+	text("Loading", 500, 250);
+	text.color = 'white';
+	text.Size = 20;
+
 }
-});
+//prevent sprite to go off map 
+function playerHitwallTop(_player, _wallTop) {
+    window.location = 'end.html';
+	background("black");
+	text("Loading", windowWidth / 2, windowHeight / 2)
+	console.log("Player hit top wall died");
+	removeAllSprites();
+	text("Loading", 500, 250);
+	text.color = 'blue';
+	text.Size = 20;
+}
+//prevent sprite to go off map
+function playerHitwallRH(_player, _wallRH) {
+    window.location = 'end.html';
+	background("black");
+	text("Loading", windowWidth / 2, windowHeight / 2)
+	console.log("Player hit right wall died");
+	removeAllSprites();
+	text("Loading", 500, 250);
+	text.color = 'blue';
+	text.Size = 20;
 }
 
-function resetGame(){
-    player = new Sprite(100, 50, 50, 'd');
-           player.color = 'cyan';
-           player.friction=10;
-    player.collides(wallBot,playerHitwallBot)
-    score=0;
+
+
+//resets the game
+function resetGame() {
+	player = new Sprite(100, 500, 50);
+	player.color = 'cyan';
+	player.friction = 10;
+	textSize(24);
+	lives = 3;
 }
 
 
