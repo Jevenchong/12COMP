@@ -14,14 +14,19 @@ var lives = 3;
 var score = 0;
 var missile;
 var platformMid;
-var timer = 0;
+var coins;
+//var coinX= platform.position.x + random(platform.width/2);
+//var coinY =platform.position.y - platform.height/2;
 var spawn;
 var wallBot;
-const MISSILEWIDTH=50;
-const MISSILELENGTH=10;
+const MISSILEWIDTH=10;
+const MISSILELENGTH=50;
 const PLATFORMWIDTH=10;
 const PLATFORMLENGTH=300;
-
+const SPAWNWIDTH=10;
+const SPAWNLENGTH =300;
+const COINWIDTH=50;
+const COINLENGTH=50;
 
 
 
@@ -30,22 +35,16 @@ const PLATFORMLENGTH=300;
 // Called by P5 before setup
 /*******************************************************/
 function preload() {
-	imgBG = loadImage('Background.png');
-	imgLives = loadImage('Heart.png');
+	imgBG = loadImage('/Assets/bg.png');
+	imgLives = loadImage('/Assets/Heart.png');
 	imgPlat = loadImage('plat.png');
-	imgMis = loadImage('missile.png');
+	imgMis = loadImage('/Assets/missile.png');
+	imgCoin = loadImage('Assets/Coin.png');
 
 }
 /*******************************************************/
 // setup()
-
-/*if.name.mouse.presses(){
-    screenSelector==
-
-}
-*/
 /*******************************************************/
-
 function setup() {
 	console.log("setup: ");
 	console.log("event ");
@@ -57,8 +56,8 @@ function setup() {
 		resetGame();
 		walls();
 		playermove();
-		spawnPlatform();
 		platforms = new Group();
+		spawnPlatform();
 	}
 
 }
@@ -80,18 +79,20 @@ function draw() {
 	}
 }
 
-
+/*******************************************************/
+//creates the starting platform
 
 function spawnPlatform() {
-	spawn = new Sprite(200, 555, PLATFORMLENGTH, PLATFORMWIDTH, 'k')
-	spawn.velocity.x = -2;
+	spawn = new Sprite(200, 555, 300, 10, 'k')
+	spawn.velocity.x = 0;
 	spawn.color = "blue";
-	spawn.addImage(imgPlat);
+	//spawn.addImage(imgPlat);
 	imgPlat.resize(300, 50);
-
-
+	platforms.add(spawn);
 }
 
+/*******************************************************/
+//creation of platforms
 
 function newPlatform() {
 	platform = new Sprite(500, 400, PLATFORMLENGTH, PLATFORMWIDTH, 'k')
@@ -102,16 +103,19 @@ function newPlatform() {
 
 }
 
+/*******************************************************/
+//creates missiles
 
 function newMissile() {
-	missile = new Sprite(500, 400, MISSILEWIDTH, MISSILELENGTH, 'k')
-	missile.velocity.x = -6;
+	missile = new Sprite(500, 400,MISSILELENGTH , MISSILEWIDTH, 'k')
+	missile.velocity.x = 0;
 	missile.color = "red";
 	missile.addImage(imgMis);
-
 }
 
-//missile system
+/*******************************************************/
+//Collision of Missile
+
 function missileHitPlayer(_player, _missile) {
 	//Missile hits player then loses 1 health if loses all 3 they die
 	lives--;
@@ -119,52 +123,88 @@ function missileHitPlayer(_player, _missile) {
 	missile.remove();
 }
 
-//game
-function gameScreen() {
+/*******************************************************/
+//Create coins
 
+/*function newCoin(){
+    coin = new Sprite(500, 400, 50, 50, 'k')
+	coin.velocity.x = -6;
+	coin.color = "red";
+	coin.addImage(imgCoin);
+	imgCoin.resize(50,50);
+	coin.x.position=coinX;
+	coin.y.position=coinY;
+	console.log("coin spawned")
+}*/
+/*******************************************************/
+//Coins collision
+
+/*function playerHitCoins(){
+    console.log('coin collected');
+    coin.remove();
+}*/
+
+/*******************************************************/
+//Game Screen()
+//Called by Draw()
+/*******************************************************/
+
+function gameScreen() {
 	screenSelector = "game";
 	background(imgBG);
 	allSprites.visible = true;
 	//platforms coming in
-	if (frameCount + 1 > nextSpawn) {
+/*	if (frameCount + 1 > nextSpawn) {
 		newPlatform();
 		nextSpawn = frameCount + random(15, 50);
 		platform.y = Math.random() * windowHeight + 500;
 		platform.x = Math.random() * windowWidth + 800;
 		platform.addImage(imgPlat);
 		imgPlat.resize(300, 50);
-		console.log(platform.y);
 		platforms.add(platform);
-	}
+	}*/
+	/*	if (frameCount + 1 > nextSpawn) {
+		newCoin();
+		nextSpawn = frameCount + random(15, 50);
+		}*/
 	if (player.y > 800) {}
 	//missiles coming in
-	if (frameCount > diffSpawn) {
+/*	if (frameCount > diffSpawn) {
 		newMissile();
 		diffSpawn = frameCount + random(10, 120);
 		missile.y = Math.random() * windowHeight + 250;
 		missile.x = Math.random() * windowWidth + 800;
 		missile.velocity.x = -(Math.random() * 15 + 10);
-		console.log(missile.y);
 		missile.addImage(imgMis);
 		imgMis.resize(200, 200);
-	}
-
+	}*/
+	
+	
 	player.collides(wallBot, playerHitwallBot);
 	player.collides(wallTop, playerHitwallBot);
-
 	player.collides(wallRH, playerHitwallBot);
-
 	player.collides(wallLH, playerHitwallLH);
-	player.collides(missile, missileHitPlayer);
-		player.collides(player, playerHitPlatform);
-		player.collides(player,playerLeavePlatform);
+//	player.collides(coins,playerHitCoins);
+	//player.collides(missile, missileHitPlayer);
+//	player.collide(platforms, playerHitPlatform);
+if(player.collide(platforms)){
+    touchingPlatform=true;
+    jumping=false;
+    
+}
+	
+	
 
+/*
+if (player isn't colliding with the platform group ){
+    set touching platform to zero
+}
+*/
 	if (player.y > 800) {
 		camera.y = player.y;
 		imgBG.y = player.y;
 	}
 
-	console.log(missile.velocity.x);
 	score++;
 	text(score, 150, 25);
 
@@ -174,15 +214,18 @@ function gameScreen() {
 		text("Loading", 500, 250);
 		text.color = 'blue';
 		text.Size = 20;
+		sessionStorage.setItem('score', score)
 		window.location = 'end.html'; //change to window.location
 	}
-	sessionStorage.setItem('score', score)
+	
 }
 
 
 
 
-//creating walls
+/*******************************************************/
+//Create Walls
+
 function walls() {
 	wallLH = new Sprite(-100, height / 2, 8, height, 'k');
 	wallLH.color = 'black';
@@ -194,113 +237,113 @@ function walls() {
 	wallTop.color = 'green';
 
 	wallBot = new Sprite(0, 3000, windowWidth * 2, 1000, 'k');
-	console.log(wallBot.y);
 }
 
-//player movement
+/*******************************************************/
+//player Movement
+
 function playermove() {
+    document.addEventListener("keydown", function(event) {
+        if (event.code === 'KeyA') {
+            player.velocity.x = -5;
+        } else if (event.code === 'KeyD') {
+            player.velocity.x = 5;
+        } else if (event.code === 'KeyW' ) {
+            if(touchingPlatform && !jumping){
+            jumping = true;
+            //player.velocity.y=-6
+            player.velocity.y=-6;
+        }
+        }
+            //DIAGNOSTICS
+        if(event.key=='p'){
+            noLoop();
+        } else if(event.key=='u'){
+            loop();
+        }
 
-	document.addEventListener("keydown", function(event) {
-		if (event.code === 'KeyA') {
-			player.vel.x = -5;
-		} else if (event.code === 'KeyD') {
-			player.vel.x = 5;
-		}
-	});
-
-	document.addEventListener("keyup", function(event) {
-		if ((event.code === 'KeyA' && player.vel.x < 0) || (event.code === 'KeyD' && player.vel.x > 0)) {
-			player.vel.x = 0;
-		}
-	});
-
-	document.addEventListener("keydown", function(event) {
-		console.log('Pressed key:', event.code);
-		if (event.code === 'KeyW' && touchingPlatform ) {
-			player.vel.y = -6;
-			jumping = true; // Set jumping to true when jumping
-			console.log('Jumping:', jumping);
-		}
-	});
-
-	document.addEventListener("keyup", function(event) {
-		if (event.code === 'KeyW') {
-			if (player.vel.y < 0) { // Only cancel jump if player is currently moving upwards
-				player.vel.y = 0;
-			}
-		}
-	});
-
-	// Additional event listener to handle the jump release
-	document.addEventListener("keyup", function(event) {
-		if (event.code === 'KeyW') {
-			jumping = false; // Reset jumping to false when jump key is released
-			console.log('Jumping:', jumping);
-		}
-	});
+    });
 
 
+    document.addEventListener("keyup", function(event) {
+        if ((event.code === 'KeyA' && player.velocity.x < 0) || (event.code === 'KeyD' && player.velocity.x > 0)) {
+            player.velocity.x = 0;
+            jumping=false;
+        } else if (event.code === 'KeyW' && player.velocity.y < 0) {
+            player.velocity.y = 0;
+            jumping=false;
+        }
+    });
 }
+
+
+
 //player hits platforms and enables one jump
 function playerHitPlatform(_player,_platforms) {
 	touchingPlatform = true; // Set touchingPlatform to true when player touches platform
-	console.log("platform hit");
+	
 }
 
 function playerLeavePlatform(_player,_platforms) {
 	touchingPlatform = false; // Set touchingPlatform to false when player leaves platform
-	console.log("platform left");
+	
 }
 
-
+/*******************************************************/
 //player hits Left hand wall and dies 
 function playerHitwallLH(_player, _wallLH) {
-    window.location = 'end.html';
-	background("black");
+    //window.location = 'end.html';
+/*	background("black");
 	text("Loading", windowWidth / 2, windowHeight / 2)
-	console.log("Player hit left wall died");
+	
 	removeAllSprites();
 	text("Loading", 500, 250);
 	text.color = 'blue';
 	text.Size = 20;
+	*/
+	console.log("Player hit left wall died");
 }
+/*******************************************************/
 // Player hits bottom wall and dies
 function playerHitwallBot(_player, _wallBot) {
-    window.location = 'end.html';
+    //window.location = 'end.html';
+    /*
     background("black");
 	text("Loading", windowWidth / 2, windowHeight / 2)
-	console.log("Player hit top wall died");
 	removeAllSprites();
 	text("Loading", 500, 250);
 	text.color = 'white';
 	text.Size = 20;
-
+	*/
+	console.log("Player hit top wall died");
 }
+
+/*******************************************************/
 //prevent sprite to go off map 
 function playerHitwallTop(_player, _wallTop) {
-    window.location = 'end.html';
-	background("black");
+    //window.location = 'end.html';
+	//background("black");
 	text("Loading", windowWidth / 2, windowHeight / 2)
 	console.log("Player hit top wall died");
-	removeAllSprites();
+//	removeAllSprites();
 	text("Loading", 500, 250);
 	text.color = 'blue';
 	text.Size = 20;
 }
+/*******************************************************/
 //prevent sprite to go off map
 function playerHitwallRH(_player, _wallRH) {
-    window.location = 'end.html';
-	background("black");
-	text("Loading", windowWidth / 2, windowHeight / 2)
+    //window.location = 'end.html';
+	//background("black");
+	//text("Loading", windowWidth / 2, windowHeight / 2)
 	console.log("Player hit right wall died");
-	removeAllSprites();
-	text("Loading", 500, 250);
-	text.color = 'blue';
-	text.Size = 20;
+	//removeAllSprites();
+	//text("Loading", 500, 250);
+	//text.color = 'blue';
+	//text.Size = 20;
 }
 
-
-
+/*******************************************************/
 //resets the game
 function resetGame() {
 	player = new Sprite(100, 500, 50);
@@ -309,7 +352,6 @@ function resetGame() {
 	textSize(24);
 	lives = 3;
 }
-
 
 /*******************************************************/
 //  END OF APP
