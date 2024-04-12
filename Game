@@ -292,7 +292,7 @@ function playerLeavePlatform(_player,_platforms) {
 /*******************************************************/
 //player hits Left hand wall and dies 
 function playerHitwallLH(_player, _wallLH) {
-    //window.location = 'end.html';
+    //window.location = 'end2.html';
 /*	background("black");
 	text("Loading", windowWidth / 2, windowHeight / 2)
 	
@@ -306,7 +306,7 @@ function playerHitwallLH(_player, _wallLH) {
 /*******************************************************/
 // Player hits bottom wall and dies
 function playerHitwallBot(_player, _wallBot) {
-    //window.location = 'end.html';
+    //window.location = 'end2.html';
     /*
     background("black");
 	text("Loading", windowWidth / 2, windowHeight / 2)
@@ -321,7 +321,7 @@ function playerHitwallBot(_player, _wallBot) {
 /*******************************************************/
 //prevent sprite to go off map 
 function playerHitwallTop(_player, _wallTop) {
-    //window.location = 'end.html';
+    //window.location = 'end2.html';
 	//background("black");
 	text("Loading", windowWidth / 2, windowHeight / 2)
 	console.log("Player hit top wall died");
@@ -333,7 +333,7 @@ function playerHitwallTop(_player, _wallTop) {
 /*******************************************************/
 //prevent sprite to go off map
 function playerHitwallRH(_player, _wallRH) {
-    //window.location = 'end.html';
+    //window.location = 'end2.html';
 	//background("black");
 	//text("Loading", windowWidth / 2, windowHeight / 2)
 	console.log("Player hit right wall died");
