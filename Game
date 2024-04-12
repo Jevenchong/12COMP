@@ -55,7 +55,12 @@ function setup() {
 	if (screenSelector == "game") {
 		resetGame();
 		walls();
-		playermove();
+			if (player.y < 800) {
+			    playermove()
+			    }else if(player.y>800){
+		gameScreen()
+	}
+;
 		platforms = new Group();
 		spawnPlatform();
 	}
@@ -84,9 +89,9 @@ function draw() {
 
 function spawnPlatform() {
 	spawn = new Sprite(200, 555, 300, 10, 'k')
-	spawn.velocity.x = 0;
+	spawn.velocity.x = -6;
 	spawn.color = "blue";
-	//spawn.addImage(imgPlat);
+	spawn.addImage(imgPlat);
 	imgPlat.resize(300, 50);
 	platforms.add(spawn);
 }
@@ -154,22 +159,22 @@ function gameScreen() {
 	background(imgBG);
 	allSprites.visible = true;
 	//platforms coming in
-/*	if (frameCount + 1 > nextSpawn) {
+	if (frameCount + 1 > nextSpawn) {
 		newPlatform();
-		nextSpawn = frameCount + random(15, 50);
+		nextSpawn = frameCount + 20;
 		platform.y = Math.random() * windowHeight + 500;
 		platform.x = Math.random() * windowWidth + 800;
 		platform.addImage(imgPlat);
 		imgPlat.resize(300, 50);
 		platforms.add(platform);
-	}*/
+	}
 	/*	if (frameCount + 1 > nextSpawn) {
 		newCoin();
 		nextSpawn = frameCount + random(15, 50);
 		}*/
 	if (player.y > 800) {}
 	//missiles coming in
-/*	if (frameCount > diffSpawn) {
+	if (frameCount > diffSpawn) {
 		newMissile();
 		diffSpawn = frameCount + random(10, 120);
 		missile.y = Math.random() * windowHeight + 250;
@@ -177,35 +182,30 @@ function gameScreen() {
 		missile.velocity.x = -(Math.random() * 15 + 10);
 		missile.addImage(imgMis);
 		imgMis.resize(200, 200);
-	}*/
-	
+	}
+	sessionStorage.setItem('score', score)
 	
 	player.collides(wallBot, playerHitwallBot);
 	player.collides(wallTop, playerHitwallBot);
 	player.collides(wallRH, playerHitwallBot);
 	player.collides(wallLH, playerHitwallLH);
 //	player.collides(coins,playerHitCoins);
-	//player.collides(missile, missileHitPlayer);
-//	player.collide(platforms, playerHitPlatform);
+	player.collides(missile, missileHitPlayer);
+	player.collide(platforms, playerHitPlatform);
+	 if (playerTouchingPlatforms()) {
+        // Increase the score
+        score++;
+    }
+
 if(player.collide(platforms)){
     touchingPlatform=true;
     jumping=false;
-    
 }
-	
-	
 
-/*
-if (player isn't colliding with the platform group ){
-    set touching platform to zero
+if (player.y>800){
+    camera.y=player.y;
+    wallBot.vel.y=-7;
 }
-*/
-	if (player.y > 800) {
-		camera.y = player.y;
-		imgBG.y = player.y;
-	}
-
-	score++;
 	text(score, 150, 25);
 
 	if (lives <= 0) {
@@ -214,13 +214,21 @@ if (player isn't colliding with the platform group ){
 		text("Loading", 500, 250);
 		text.color = 'blue';
 		text.Size = 20;
-		sessionStorage.setItem('score', score)
+		
 		window.location = 'end.html'; //change to window.location
 	}
 	
 }
 
 
+function playerTouchingPlatforms() {
+    for (let i = 0; i < platforms.length; i++) {
+        if (player.collide(platforms[i])) {
+            return true; // Player is touching a platform
+        }
+    }
+    return false; // Player is not touching any platform
+}
 
 
 /*******************************************************/
@@ -251,8 +259,7 @@ function playermove() {
         } else if (event.code === 'KeyW' ) {
             if(touchingPlatform && !jumping){
             jumping = true;
-            //player.velocity.y=-6
-            player.velocity.y=-6;
+            player.velocity.y=-7;
         }
         }
             //DIAGNOSTICS
@@ -263,7 +270,6 @@ function playermove() {
         }
 
     });
-
 
     document.addEventListener("keyup", function(event) {
         if ((event.code === 'KeyA' && player.velocity.x < 0) || (event.code === 'KeyD' && player.velocity.x > 0)) {
@@ -281,7 +287,6 @@ function playermove() {
 //player hits platforms and enables one jump
 function playerHitPlatform(_player,_platforms) {
 	touchingPlatform = true; // Set touchingPlatform to true when player touches platform
-	
 }
 
 function playerLeavePlatform(_player,_platforms) {
@@ -292,40 +297,39 @@ function playerLeavePlatform(_player,_platforms) {
 /*******************************************************/
 //player hits Left hand wall and dies 
 function playerHitwallLH(_player, _wallLH) {
-    //window.location = 'end2.html';
-/*	background("black");
+    window.location = 'end.html';
+	background("black");
 	text("Loading", windowWidth / 2, windowHeight / 2)
 	
 	removeAllSprites();
 	text("Loading", 500, 250);
 	text.color = 'blue';
 	text.Size = 20;
-	*/
+	
 	console.log("Player hit left wall died");
 }
 /*******************************************************/
 // Player hits bottom wall and dies
 function playerHitwallBot(_player, _wallBot) {
-    //window.location = 'end2.html';
-    /*
+    window.location = 'end.html';
+    
     background("black");
 	text("Loading", windowWidth / 2, windowHeight / 2)
 	removeAllSprites();
 	text("Loading", 500, 250);
 	text.color = 'white';
 	text.Size = 20;
-	*/
 	console.log("Player hit top wall died");
 }
 
 /*******************************************************/
 //prevent sprite to go off map 
 function playerHitwallTop(_player, _wallTop) {
-    //window.location = 'end2.html';
-	//background("black");
+    window.location = 'end.html';
+	background("black");
 	text("Loading", windowWidth / 2, windowHeight / 2)
 	console.log("Player hit top wall died");
-//	removeAllSprites();
+	removeAllSprites();
 	text("Loading", 500, 250);
 	text.color = 'blue';
 	text.Size = 20;
@@ -333,14 +337,14 @@ function playerHitwallTop(_player, _wallTop) {
 /*******************************************************/
 //prevent sprite to go off map
 function playerHitwallRH(_player, _wallRH) {
-    //window.location = 'end2.html';
-	//background("black");
-	//text("Loading", windowWidth / 2, windowHeight / 2)
+    window.location = 'end.html';
+	background("black");
+	text("Loading", windowWidth / 2, windowHeight / 2)
 	console.log("Player hit right wall died");
-	//removeAllSprites();
-	//text("Loading", 500, 250);
-	//text.color = 'blue';
-	//text.Size = 20;
+	removeAllSprites();
+	text("Loading", 500, 250);
+	text.color = 'blue';
+	text.Size = 20;
 }
 
 /*******************************************************/
