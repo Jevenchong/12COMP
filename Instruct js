@@ -1,0 +1,73 @@
+/*******************************************************/
+// Plat runner
+// Written by Jeven
+/*******************************************************/
+console.log("plat runner loaded");
+var screenSelector="instruct"
+
+
+var startbutton;
+
+//the back button for the instruction screen
+var backbutton;
+
+
+/*******************************************************/
+// preload()
+// Called by P5 before setup
+/*******************************************************/
+
+/*******************************************************/
+// setup()
+/*******************************************************/
+
+function setup() {
+    console.log("setup: ");
+    console.log("event ");
+    
+    world.gravity.y=10;  
+    cnv = new Canvas(windowWidth, windowHeight); 
+ 
+    backbutton = new Sprite(100,700,150,50,'s');
+    backbutton.color='red';
+
+  //switching Screens
+
+    
+}
+    
+
+
+/*******************************************************/
+// draw()
+/*******************************************************/
+function draw() {
+    screenSelector= instructScreen();
+
+       if (backbutton.mouse.presses()){ 
+       window.location = 'index.html';
+       console.log('clicked');
+    }
+    if (backbutton.mouse.hovering()) backbutton.color = 'blue';
+	else backbutton.color = 'red';
+}
+
+
+function instructScreen(){
+    background("lightGreen");
+    screenSelector="instruct";
+    textSize(25);
+    text("WASD to move", 50,100);
+    text("Dodge the missiles and stay alive", 50,150);
+    text("Jump on the platforms to gain score ",50,200);
+    text("Avoid falling off the map if you do then you die ",50,250);
+    text("If you fall the ground rises and you die",50,300);
+    text("Good luck! Have Fun!",50,350);
+    backbutton.text='Back';
+    backbutton.textSize=25;
+}
+
+
+/*******************************************************/
+//  END OF APP
+/*******************************************************/
