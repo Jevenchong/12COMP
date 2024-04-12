@@ -30,32 +30,30 @@
 ****************************************************-->
 <body>
   <script src="end.js"> </script>
- 
         <label for="username">Name:</label>
         <input type="text" id="nameInput" placeholder="Enter your name">
         <label for="userAge">Age:</label>
         <input type="text" id="ageInput" placeholder="Enter your age">
         <button onclick="getUserInfo()">Submit Name</button>
-
+        
     <script>
  var userAgeIsInvalid= true;
-        var userNameIsInvalid=true;
-       const MINAGE=5;
-       const MAXAGE=100;
+    var userNameIsInvalid=true;
+    const MINAGE=5;
+    const MAXAGE=100;
        
     function getUserInfo(){
         var userName = document.getElementById("nameInput").value;
         localStorage.setItem('userName', userName);
         console.log(name);
-      
-       
-
+    // name invalidity 
      if (!isNaN(userName) || userName == "" || userName == " ") {
       alert("Invalid username you must enter a valid username");//invalid msg
     }
     else {
       userNameIsInvalid=false;
     } 
+    //age setting storage and the invalid ages 
     var userAge = document.getElementById("ageInput").value;
         localStorage.setItem('userAge', userAge);
         
@@ -69,29 +67,13 @@
     if (userNameIsInvalid==false & userAgeIsInvalid==false){
         window.location='leaderboard.html';
     }
-      
-        
+    
   }
-  
-
-  
-
-  
-  
-        
-
-    
-    
-
     </script>
   
 </body>
 </html>
+
 <!--***************************************************
   END OF INDEX.HTML
-       
-  
-
-    
-  <button type="button" onclick==instructionScreen()>Instructions</button>
 ****************************************************-->
